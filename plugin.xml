@@ -7,8 +7,8 @@
 
 
     <description>Google Maps native SDK for Android and iOS</description>
-    <repo>https://github.com/mapsplugin/cordova-plugin-googlemaps</repo>
-    <issue>https://github.com/mapsplugin/cordova-plugin-googlemaps/issues</issue>
+    <repo>https://github.com/appamap/google-map-native-android</repo>
+    <issue>https://github.com/appamap/google-map-native-android</issue>
 
     <license>Apache 2.0</license>
 
