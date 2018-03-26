@@ -50,9 +50,51 @@
         [self.pluginLayer addSubview: view];
     }
 
+    
+    
+    self.btnAR = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.btnAR addTarget:self
+                   action:@selector(btnArClicked:)
+         forControlEvents:UIControlEventTouchUpInside];
+
+    
+    
+    [self.btnAR setTitle:@"" forState:UIControlStateNormal];
+    self.btnAR.frame = CGRectMake(0.0, 0.0, 40.0, 40.0);
+//    self.btnAR.backgroundColor=[UIColor redColor];
+    
+    int myInt = (int) self.pluginScrollView.frame.size.height;
+    NSLog(@"i= %d",myInt);
+    [self.btnAR setImage:[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"icon_eye" ofType:@"png"]] forState:UIControlStateNormal];
+//    [self.btnAR setBackgroundImage:[UIImage imageNamed: @"icon_eye.png"] forState:UIControlStateNormal];
+    
+    [self.btnAR setContentMode:UIViewContentModeCenter];
+    self.btnAR.hidden=YES;
+    
+    
+    
+    self.btnZoom = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.btnZoom addTarget:self
+                     action:@selector(btnLocationClicked:)
+           forControlEvents:UIControlEventTouchUpInside];
+    [self.btnZoom setTitle:@"" forState:UIControlStateNormal];
+    self.btnZoom.frame = CGRectMake(0.0, 0.0, 40.0, 40.0);
+    //    self.btnAR.backgroundColor=[UIColor redColor];
+    
+    [self.btnZoom setImage:[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"icon_arrows" ofType:@"png"]] forState:UIControlStateNormal];
+    //    [self.btnAR setBackgroundImage:[UIImage imageNamed: @"icon_eye.png"] forState:UIControlStateNormal];
+    
+    [self.btnZoom setContentMode:UIViewContentModeCenter];
+    self.btnZoom.hidden=YES;
+    
+    
+    
     [self.viewController.view addSubview:self.pluginLayer];
+    [self.viewController.view addSubview:self.btnAR];
+    [self.viewController.view addSubview:self.btnZoom];
+    
 
-
+    
     NSString *APIKey = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"Google Maps API Key"];
     if (APIKey == nil) {
         NSDictionary *info = [[NSBundle mainBundle] infoDictionary];
@@ -138,9 +180,65 @@
     [self.pluginScrollView.debugView setNeedsDisplay];
 }
 
+
+- (IBAction)btnLocationClicked:(id)sender{
+
+    if (self.locationManager == nil) {
+        self.locationManager = [[CLLocationManager alloc] init];
+    }
+    self.locationManager.delegate = self;
+    
+    
+    //----------------------------------------------------
+    // kCLAuthorizationStatusNotDetermined
+    // kCLAuthorizationStatusAuthorized
+    // kCLAuthorizationStatusAuthorizedAlways
+    // kCLAuthorizationStatusAuthorizedWhenInUse
+    //----------------------------------------------------
+    CLLocationAccuracy locationAccuracy = kCLLocationAccuracyNearestTenMeters;
+//    NSDictionary *opts = [command.arguments objectAtIndex:0];
+//    BOOL isEnabledHighAccuracy = NO;
+//    if ([opts objectForKey:@"enableHighAccuracy"]) {
+//        isEnabledHighAccuracy = [[opts objectForKey:@"enableHighAccuracy"] boolValue];
+//    }
+    BOOL isEnabledHighAccuracy = YES;
+    if (isEnabledHighAccuracy == YES) {
+        locationAccuracy = kCLLocationAccuracyBestForNavigation;
+        self.locationManager.distanceFilter = 5;
+    } else {
+        self.locationManager.distanceFilter = 10;
+    }
+    self.locationManager.desiredAccuracy = locationAccuracy;
+    
+    
+    [self.locationManager stopUpdatingLocation];
+    [self.locationManager startUpdatingLocation];
+    //    self.locationManager.startUpdatingLocation();
+//    BOOL retValue = [self.mapCtrl didTapMyLocationButtonForMapView:self.mapCtrl.map];
+
+//    self.locationManager.startUpdatingLocation();
+//    NSLog(@"my test %d",self.mapCtrl.map.myLocation?111:222);
+//    self.mapCtrl.map.settings.myLocationButton=NO;
+
+//    if (retValue == YES) {
+//    }
+}
+
+
+- (IBAction)btnArClicked:(id)sender
+{
+    //Write a code you want to execute on buttons click event
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Alert"
+                                                    message:@"Please rotate your phone in landscape mode with home buttom to the LEFT for Augmented Reality mode."
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+}
 -(void)pageDidLoad {
     self.webView.backgroundColor = [UIColor clearColor];
     self.webView.opaque = NO;
+    
 }
 
 /**
@@ -174,13 +272,33 @@
         NSDictionary *options = [command.arguments objectAtIndex:0];
         self.mapCtrl = [[GoogleMapsViewController alloc] initWithOptions:options];
         self.mapCtrl.webView = self.webView;
-
+        
+        
+        
+        
         if ([options objectForKey:@"backgroundColor"]) {
             NSArray *rgbColor = [options objectForKey:@"backgroundColor"];
             self.pluginLayer.backgroundColor = [rgbColor parsePluginColor];
         }
 
+        if ([options objectForKey:@"is_event"]) {
+            self.is_event = [[options objectForKey:@"is_event"] boolValue];
+            if (self.is_event){
+                self.btnAR.center=CGPointMake(30,self.pluginScrollView.frame.size.height*0.4+40);
+                int myWidth = (int) self.pluginScrollView.frame.size.width;
+                self.btnZoom.center=CGPointMake(myWidth-30,self.pluginScrollView.frame.size.height*0.4+40);
+                
+            }else{
+                self.btnAR.center=CGPointMake(30,self.pluginScrollView.frame.size.height*0.1+40);
+                int myWidth = (int) self.pluginScrollView.frame.size.width;
+                self.btnZoom.center=CGPointMake(myWidth-30,self.pluginScrollView.frame.size.height*0.1+40);
+            }
+//            self.pluginLayer.backgroundColor = [rgbColor parsePluginColor];
+        }
 
+        self.mapCtrl.map.settings.myLocationButton=NO;
+        
+        
         // Create an instance of Map Class
 #if CORDOVA_VERSION_MIN_REQUIRED >= __CORDOVA_4_0_0
         Map *mapClass = [(CDVViewController*)self.viewController getCommandInstance:@"Map"];
@@ -203,6 +321,7 @@
             //[self.pluginScrollView addSubview:self.mapCtrl.view];
             [self resizeMap:command];
         }
+        self.mapCtrl.map.settings.myLocationButton=NO;
 
 
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
@@ -218,10 +337,15 @@
     if (self.mapCtrl.isFullScreen == NO) {
         if (isVisible == YES) {
             self.mapCtrl.map.hidden = NO;
+            self.btnAR.hidden=NO;
+            self.btnZoom.hidden=NO;
         } else {
             self.mapCtrl.map.hidden = YES;
+            self.btnAR.hidden=YES;
+            self.btnZoom.hidden=YES;
         }
     }
+//    self.mapCtrl.map.settings.myLocationButton=NO;
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
@@ -288,6 +412,10 @@
                                              messageAsString:[NSString stringWithFormat:@"class not found: %@", className]];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         }
+        
+        self.mapCtrl.map.settings.myLocationButton=NO;
+//        self.mapCtrl.map.myLocationEnabled = YES;
+        
     }];
 }
 
@@ -671,6 +799,19 @@
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:json];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }
+    GMSCameraPosition *camera = [GMSCameraPosition
+                                 cameraWithLatitude: self.locationManager.location.coordinate.latitude
+                                 longitude:self.locationManager.location.coordinate.longitude
+                                 zoom:12];
+    
+    //    self.mapCtrl.map.camera=camera;
+    [self.mapCtrl.map animateToCameraPosition:camera];
+    
+    
+//    let camera = GMSCameraPosition.cameraWithLatitude((location?.coordinate.latitude)!, longitude: (location?.coordinate.longitude)!, zoom: 17.0)
+//    
+//    self.mapView?.animateToCameraPosition(camera)
+    
 
     [self.locationCommandQueue removeAllObjects];
     [self.locationManager stopUpdatingLocation];

@@ -162,7 +162,7 @@ NSDictionary *initOptions;
       if ([controls valueForKey:@"myLocationButton"] != nil) {
         isEnabled = [[controls valueForKey:@"myLocationButton"] boolValue];
         self.map.settings.myLocationButton = isEnabled;
-        self.map.myLocationEnabled = isEnabled;
+        self.map.myLocationEnabled = YES;
       }
       //indoorPicker
       if ([controls valueForKey:@"indoorPicker"] != nil) {

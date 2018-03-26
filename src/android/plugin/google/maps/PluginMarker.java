@@ -850,29 +850,34 @@ public class PluginMarker extends MyPlugin {
             return;
           }
 
-          BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(image);
-          marker.setIcon(bitmapDescriptor);
+          try{
+            BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(image);
+            marker.setIcon(bitmapDescriptor);
 
-          // Save the information for the anchor property
-          Bundle imageSize = new Bundle();
-          imageSize.putInt("width", image.getWidth());
-          imageSize.putInt("height", image.getHeight());
-          PluginMarker.this.objects.put("imageSize", imageSize);
+            // Save the information for the anchor property
+            Bundle imageSize = new Bundle();
+            imageSize.putInt("width", image.getWidth());
+            imageSize.putInt("height", image.getHeight());
+            PluginMarker.this.objects.put("imageSize", imageSize);
 
-          // The `anchor` of the `icon` property
-          if (iconProperty.containsKey("anchor") == true) {
-            double[] anchor = iconProperty.getDoubleArray("anchor");
-            if (anchor.length == 2) {
-              _setIconAnchor(marker, anchor[0], anchor[1], imageSize.getInt("width"), imageSize.getInt("height"));
+            // The `anchor` of the `icon` property
+            if (iconProperty.containsKey("anchor") == true) {
+              double[] anchor = iconProperty.getDoubleArray("anchor");
+              if (anchor.length == 2) {
+                _setIconAnchor(marker, anchor[0], anchor[1], imageSize.getInt("width"), imageSize.getInt("height"));
+              }
             }
-          }
 
-          // The `anchor` property for the infoWindow
-          if (iconProperty.containsKey("infoWindowAnchor") == true) {
-            double[] anchor = iconProperty.getDoubleArray("infoWindowAnchor");
-            if (anchor.length == 2) {
-              _setInfoWindowAnchor(marker, anchor[0], anchor[1], imageSize.getInt("width"), imageSize.getInt("height"));
+            // The `anchor` property for the infoWindow
+            if (iconProperty.containsKey("infoWindowAnchor") == true) {
+              double[] anchor = iconProperty.getDoubleArray("infoWindowAnchor");
+              if (anchor.length == 2) {
+                _setInfoWindowAnchor(marker, anchor[0], anchor[1], imageSize.getInt("width"), imageSize.getInt("height"));
+              }
             }
+
+          }catch(Exception ex){
+//            ex.printStackTrace();
           }
 
           image.recycle();

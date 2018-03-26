@@ -21,6 +21,13 @@
 @property (nonatomic) UIView *licenseLayer;
 @property (nonatomic) UIView *footer;
 @property (nonatomic) UIButton *closeButton;
+
+
+@property (nonatomic) UIButton *btnAR;
+@property (nonatomic) UIButton *btnZoom;
+@property (nonatomic) CDVInvokedUrlCommand *cmd;
+@property (nonatomic) BOOL is_event;
+
 @property (nonatomic) UIButton *licenseButton;
 @property (nonatomic, strong) CLLocationManager *locationManager;
 @property (nonatomic, strong) NSMutableArray *locationCommandQueue;

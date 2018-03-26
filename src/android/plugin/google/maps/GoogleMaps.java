@@ -25,6 +25,7 @@ import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -32,6 +33,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.AbsoluteLayout;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
@@ -39,6 +41,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.geteventro.revised.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -145,11 +148,14 @@ public class GoogleMaps extends CordovaPlugin implements View.OnClickListener, O
 
   private JSONObject mapDivLayoutJSON = null;
   private MapView mapView = null;
+  public Button btnAR;
+  public boolean is_event;
   public GoogleMap map = null;
   private Activity activity;
   private LinearLayout windowLayer = null;
   private ViewGroup root;
   private final int CLOSE_LINK_ID = 0x7f999990;  //random
+  private final int AR_ID = 0x11999990;  //random
   private MyPluginLayout mPluginLayout = null;
   public boolean isDebug = false;
   private GoogleApiClient googleApiClient = null;
@@ -306,10 +312,17 @@ public class GoogleMaps extends CordovaPlugin implements View.OnClickListener, O
   @SuppressWarnings("unused")
   private void setVisible(JSONArray args, CallbackContext callbackContext) throws JSONException {
     boolean visible = args.getBoolean(0);
+//    boolean is_event = false;
     if (this.windowLayer == null) {
       if (visible) {
+        if (btnAR!=null) {
+          btnAR.setVisibility(View.VISIBLE);
+        }
         mapView.setVisibility(View.VISIBLE);
       } else {
+        if (btnAR!=null) {
+          btnAR.setVisibility(View.INVISIBLE);
+        }
         mapView.setVisibility(View.INVISIBLE);
       }
     }
@@ -457,6 +470,11 @@ public class GoogleMaps extends CordovaPlugin implements View.OnClickListener, O
     GoogleMapOptions options = new GoogleMapOptions();
     final JSONObject params = args.getJSONObject(0);
     //background color
+    if (params.has("is_event")) {
+      is_event=params.getBoolean("is_event");
+
+    }
+
     if (params.has("backgroundColor")) {
       JSONArray rgba = params.getJSONArray("backgroundColor");
 
@@ -548,6 +566,48 @@ public class GoogleMaps extends CordovaPlugin implements View.OnClickListener, O
       }
       options.camera(builder.build());
     }
+
+    btnAR = new Button(activity);
+    btnAR.setText("");
+    btnAR.setId(AR_ID);
+    LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+    lp.gravity = Gravity.TOP | Gravity.LEFT;
+    DisplayMetrics metric=activity.getResources().getDisplayMetrics();
+    lp.width=(int) (40*density);
+    lp.height=(int) (40*density);
+    if (!is_event) {
+      lp.topMargin = (int) (65 * density);
+    }else {
+      lp.topMargin = (int) (metric.heightPixels * 0.4 ) + (int) (3 * density);
+    }
+    Log.w("init","INIT "+is_event);
+    lp.leftMargin=(int) (10*density);
+    btnAR.setBackgroundColor(0xEEffFFff);
+    btnAR.setBackgroundResource(R.drawable.icon_eye);
+    int padding= (int) (10*density);
+    btnAR.setPadding(padding,padding,padding,padding);
+
+    btnAR.setVisibility(View.INVISIBLE);
+
+    btnAR.setLayoutParams(lp);
+    btnAR.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        new AlertDialog.Builder(activity)
+                .setTitle("Alert")
+                .setMessage("Please rotate your phone in landscape mode with home buttom to the LEFT for Augmented Reality mode.")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+
+                  }
+                })
+//                .setNegativeButton("No", null)
+                .show();
+      }
+    });
+
+    mPluginLayout.addView(btnAR);
 
     mapView = new MapView(activity, options);
     mapView.onCreate(null);
@@ -1658,6 +1718,7 @@ public class GoogleMaps extends CordovaPlugin implements View.OnClickListener, O
   @Override
   public void onMapLoaded() {
     webView.loadUrl("javascript:plugin.google.maps.Map._onMapEvent('map_loaded')");
+    btnAR.setVisibility(View.VISIBLE);
   }
 
   /**

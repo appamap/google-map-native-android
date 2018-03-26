@@ -37,13 +37,13 @@
   if ([[json valueForKey:@"geodesic"] boolValue]) {
     polyline.geodesic = YES;
   }
-  NSArray *rgbColor = [json valueForKey:@"color"];
-  polyline.strokeColor = [rgbColor parsePluginColor];
+//  NSArray *rgbColor = [json valueForKey:@"color"];
+  polyline.strokeColor = [UIColor colorWithRed:0.35 green:0.49 blue:0.76 alpha:1.0];//[rgbColor parsePluginColor];
 
-  polyline.strokeWidth = [[json valueForKey:@"width"] floatValue];
+    polyline.strokeWidth = 4;//[[json valueForKey:@"width"] floatValue];
   polyline.zIndex = [[json valueForKey:@"zIndex"] floatValue];
 
-  polyline.tappable = YES;
+  polyline.tappable = NO;
   
   NSString *id = [NSString stringWithFormat:@"polyline_%lu", (unsigned long)polyline.hash];
   [self.mapCtrl.overlayManager setObject:polyline forKey: id];

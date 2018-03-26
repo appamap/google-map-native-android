@@ -177,7 +177,7 @@
         //NSLog(@"%@", [[TBXML elementName:tbxml.rootXMLElement] lowercaseString]);
         //NSLog(@"-----------------> parseXML");
         kmlData = [self parseXML:tbxml.rootXMLElement];
-        //NSLog(@"%@", kmlData);
+        NSLog(@"%@", kmlData);
 
     });
 
