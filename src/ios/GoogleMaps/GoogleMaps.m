@@ -18,6 +18,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pageDidLoad) name:CDVPageDidLoadNotification object:nil];
 #endif
     self.licenseLayer = nil;
+    self.is_first=true;
     self.mapCtrl.isFullScreen = YES;
     self.locationCommandQueue = [[NSMutableArray alloc] init];
 
@@ -412,8 +413,13 @@
                                              messageAsString:[NSString stringWithFormat:@"class not found: %@", className]];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         }
-        
-        self.mapCtrl.map.settings.myLocationButton=NO;
+        dispatch_async(dispatch_get_main_queue(),
+            ^{
+                if (self.mapCtrl.map.settings.myLocationButton){
+                    self.mapCtrl.map.settings.myLocationButton=NO;
+                    self.is_first=false;
+                }
+            });
 //        self.mapCtrl.map.myLocationEnabled = YES;
         
     }];
