@@ -335,7 +335,7 @@
 {
     Boolean isVisible = [[command.arguments objectAtIndex:0] boolValue];
     if (self.mapCtrl.isFullScreen == NO) {
-        if (isVisible == NO) {
+        if (isVisible == YES) {
             self.mapCtrl.map.hidden = NO;
             self.btnAR.hidden=NO;
             self.btnZoom.hidden=NO;
