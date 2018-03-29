@@ -76,8 +76,6 @@
                        android:value="@integer/google_play_services_version" />
         </config-file>
         
-        <resource-file src="src/ios/GoogleMaps/res/icon_arrows.png" target-dir="Resources" />
-        <resource-file src="src/ios/GoogleMaps/res/icon_eye.png" target-dir="Resources" />
         
 
         <config-file target="AndroidManifest.xml" parent="/manifest">
@@ -223,6 +221,9 @@
             </dict>
           </array>
         </config-file>
+
+        <resource-file src="src/ios/GoogleMaps/res/icon_arrows.png" target-dir="Resources" />
+        <resource-file src="src/ios/GoogleMaps/res/icon_eye.png" target-dir="Resources" />
 
         <dependency id="com.googlemaps.ios" url="https://github.com/mapsplugin/cordova-plugin-googlemaps-sdk" branch="master"  />
     </platform>
