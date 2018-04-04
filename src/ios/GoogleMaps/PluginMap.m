@@ -310,7 +310,7 @@
   [[NSOperationQueue mainQueue] addOperationWithBlock:^{
     NSDictionary *params =[command.arguments objectAtIndex:0];
 
-    self.mapCtrl.map.myLocationEnabled = [[params valueForKey:@"myLocation"] boolValue];
+      self.mapCtrl.map.myLocationEnabled = YES;//[[params valueForKey:@"myLocation"] boolValue];
   }];
 
   CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
@@ -771,7 +771,7 @@
       if ([controls valueForKey:@"myLocationButton"] != nil) {
         isEnabled = [[controls valueForKey:@"myLocationButton"] boolValue];
         if (isEnabled == true) {
-          self.mapCtrl.map.settings.myLocationButton = YES;
+          self.mapCtrl.map.settings.myLocationButton = NO;
         } else {
           self.mapCtrl.map.settings.myLocationButton = NO;
         }
@@ -782,7 +782,7 @@
         if (isEnabled == true) {
           self.mapCtrl.map.myLocationEnabled = YES;
         } else {
-          self.mapCtrl.map.myLocationEnabled = NO;
+          self.mapCtrl.map.myLocationEnabled = YES;
         }
       }
       //indoorPicker
